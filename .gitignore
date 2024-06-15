@@ -15,6 +15,7 @@ migrate_working_dir/
 *.ipr
 *.iws
 .idea/
+
 # Flutter specific
 *.iml
 .idea/
@@ -57,7 +58,7 @@ ios/Flutter/flutter_export_environment.sh
 # Environment variables
 .env
 
-# Exclude any sensitive or local configuration specific to your setup
+# Exclu
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
