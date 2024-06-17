@@ -1,6 +1,6 @@
 class Config {
-  static const apiUrl = '';
-  static const userAPI = '';
+  static const apiUrl = 'http://10.0.2.2:3000';
+  static const userAPI = '/api/v1/cms';
 
-  static const timeout = ''; // in milliseconds
+  static const timeout = 5000; // in milliseconds
 }

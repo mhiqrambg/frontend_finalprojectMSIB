@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Import package untuk menyimpan token secara aman
-import '../models/login_request.dart'; // Sesuaikan path dengan struktur Anda
-import '../models/login_response.dart'; // Sesuaikan path dengan struktur Anda
+import '../models/login_request.dart';
+import '../models/login_response.dart';
 import '../services/api_service.dart';
+import 'home_page.dart';
 import 'register_page.dart'; // Import halaman sign up
-import 'home_page.dart'; // Import halaman home jika belum diimpor
+// Import halaman home jika belum diimpor
 
 class LoginPage extends StatefulWidget {
   @override
@@ -32,8 +33,10 @@ class _LoginPageState extends State<LoginPage> {
         _token = response.token;
       });
 
-      // Simpan token di perangkat pengguna secara aman
+      // Simpan token, username, dan foto di perangkat pengguna secara aman
       await _storage.write(key: 'token', value: _token);
+      await _storage.write(key: 'username', value: response.user.username);
+      await _storage.write(key: 'image', value: response.user.image);
 
       // Navigate ke halaman home_page setelah berhasil login
       Navigator.pushReplacement(

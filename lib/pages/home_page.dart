@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 import 'home_page/category_page.dart';
 import 'home_page/products.dart';
@@ -16,9 +15,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final FlutterSecureStorage _storage = FlutterSecureStorage();
+
   String _username = '';
-  String _imageUrl = '';
-  bool _isLoading = true;
+  String _image = '';
 
   static List<Widget> _pages = <Widget>[
     CategoryPage(),
@@ -29,19 +28,16 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadUserInfo();
   }
 
-  Future<void> _loadUserData() async {
-    String? token = await _storage.read(key: 'token');
-    if (token != null) {
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-      setState(() {
-        _username = decodedToken['username'];
-        _imageUrl = decodedToken['imageUrl'];
-        _isLoading = false;
-      });
-    }
+  Future<void> _loadUserInfo() async {
+    String? username = await _storage.read(key: 'username');
+    String? image = await _storage.read(key: 'image');
+    setState(() {
+      _username = username ?? 'Guest';
+      _image = image ?? '';
+    });
   }
 
   void _onItemTapped(int index) {
@@ -52,6 +48,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _logout(BuildContext context) async {
     await _storage.delete(key: 'token'); // Hapus token dari penyimpanan aman
+    await _storage.delete(
+        key: 'username'); // Hapus username dari penyimpanan aman
+    await _storage.delete(key: 'image'); // Hapus image dari penyimpanan aman
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
@@ -62,17 +61,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _isLoading
-            ? Text('Loading...')
-            : Row(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(_imageUrl),
-                  ),
-                  SizedBox(width: 10),
-                  Text(_username),
-                ],
-              ),
+        title: Row(
+          children: [
+            CircleAvatar(
+              backgroundImage: _image.isNotEmpty
+                  ? NetworkImage(_image)
+                  : AssetImage('assets/default_avatar.png') as ImageProvider,
+            ),
+            SizedBox(width: 10),
+            Text(_username),
+          ],
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
@@ -80,9 +79,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _pages[_selectedIndex],
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
