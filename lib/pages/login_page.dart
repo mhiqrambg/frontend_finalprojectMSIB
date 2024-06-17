@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Import package untuk menyimpan token secara aman
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
 import '../services/api_service.dart';
 import 'home_page.dart';
-import 'register_page.dart'; // Import halaman sign up
-// Import halaman home jika belum diimpor
+import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -16,12 +15,10 @@ class _LoginPageState extends State<LoginPage> {
   final ApiService _apiService = ApiService();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final FlutterSecureStorage _storage =
-      FlutterSecureStorage(); // Instance untuk menyimpan token secara aman
-  String _token = '';
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
   String _message = '';
 
-  void _login() async {
+  Future<void> _login() async {
     try {
       LoginRequestModel request = LoginRequestModel(
         username: _usernameController.text,
@@ -29,12 +26,8 @@ class _LoginPageState extends State<LoginPage> {
       );
       LoginResponseModel response = await _apiService.login(request);
 
-      setState(() {
-        _token = response.token;
-      });
-
       // Simpan token, username, dan foto di perangkat pengguna secara aman
-      await _storage.write(key: 'token', value: _token);
+      await _storage.write(key: 'token', value: response.token);
       await _storage.write(key: 'username', value: response.user.username);
       await _storage.write(key: 'image', value: response.user.image);
 

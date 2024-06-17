@@ -5,7 +5,7 @@ import 'home_page/category_page.dart';
 import 'home_page/products.dart';
 import 'home_page/upload_page.dart';
 import 'login_page.dart';
-// Import halaman login
+import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -46,11 +46,19 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // Function to navigate to profile page and reload user info upon return
+  Future<void> _navigateToProfile(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfilePage()),
+    );
+    _loadUserInfo(); // Reload user info when returning from profile page
+  }
+
   Future<void> _logout(BuildContext context) async {
-    await _storage.delete(key: 'token'); // Hapus token dari penyimpanan aman
-    await _storage.delete(
-        key: 'username'); // Hapus username dari penyimpanan aman
-    await _storage.delete(key: 'image'); // Hapus image dari penyimpanan aman
+    await _storage.delete(key: 'token');
+    await _storage.delete(key: 'username');
+    await _storage.delete(key: 'image');
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
@@ -70,12 +78,16 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(width: 10),
             Text(_username),
+            GestureDetector(
+              onTap: () => _navigateToProfile(context),
+              child: Icon(Icons.edit),
+            ),
           ],
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () => _logout(context), // Panggil fungsi logout
+            onPressed: () => _logout(context),
           ),
         ],
       ),
