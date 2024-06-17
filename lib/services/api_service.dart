@@ -1,53 +1,40 @@
 import 'dart:convert';
-
-import 'package:fe_flutterfinal/config.dart';
-import 'package:fe_flutterfinal/models/login_request_model.dart';
-import 'package:fe_flutterfinal/models/login_response_model.dart';
-import 'package:fe_flutterfinal/models/register_response_model.dart';
-import 'package:fe_flutterfinal/services/shared_service.dart';
 import 'package:http/http.dart' as http;
+import '../config.dart';
+import '../models/login_request.dart';
+import '../models/login_response.dart';
+import '../models/register_request.dart';
+import '../models/register_response.dart';
 
-class APIService {
-  static var client = http.Client();
-
-  static Future<bool> login(LoginRequestModel model) async {
-    Map<String, String> requestHeaders = {'Content-Type': 'application/json'};
-    var url = Uri.http(Config.apiURL, Config.loginAPI);
-
-    var response = await client.post(
+class ApiService {
+  Future<LoginResponseModel> login(LoginRequestModel request) async {
+    final url = Uri.parse('${Config.apiUrl + Config.userAPI}/signin');
+    final response = await http.post(
       url,
-      headers: requestHeaders,
-      body: jsonEncode(model.toJson()),
+      body: jsonEncode(request.toJson()),
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
-      await SharedService.setLoginDetails(loginResponseJson(response.body));
-      return true;
+      return LoginResponseModel.fromJson(jsonDecode(response.body));
     } else {
-      return false;
+      throw Exception('Failed to login');
     }
   }
 
-  static Future<RegisterResponseModel> register(
-    RegisterResponseModel model,
-  ) async {
-    Map<String, String> requestHeaders = {
-      'Content-Type': 'application/json',
-    };
-
-    var url = Uri.http(
-      Config.apiURL,
-      Config.registerAPI,
-    );
-
-    var response = await client.post(
+  Future<RegisterResponseModel> register(RegisterRequestModel request) async {
+    final url = Uri.parse(
+        '${Config.apiUrl + Config.userAPI}/signup'); // Sesuaikan dengan endpoint register di server Anda
+    final response = await http.post(
       url,
-      headers: requestHeaders,
-      body: jsonEncode(model.toJson()),
+      body: jsonEncode(request.toJson()),
+      headers: {'Content-Type': 'application/json'},
     );
 
-    return registerResponseModel(
-      response.body,
-    );
+    if (response.statusCode == 201) {
+      return RegisterResponseModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to register');
+    }
   }
 }

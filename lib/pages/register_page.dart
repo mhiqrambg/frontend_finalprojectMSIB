@@ -1,172 +1,102 @@
 import 'package:flutter/material.dart';
-import 'package:snippet_coder_utils/ProgressHUD.dart'; // Adjust to actual location
-import 'package:snippet_coder_utils/hex_color.dart'; // Adjust to actual location
+import '../models/register_request.dart';
+import '../models/register_response.dart';
+import '../services/api_service.dart';
+import 'login_page.dart'; // Import halaman login_page.dart
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
-
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  bool isAPICallProcess = false;
-  bool hidePassword = true;
-  GlobalKey<FormState> globalFormKey = GlobalKey<FormState>();
-  String? username;
-  String? password;
-  String? imageLink; // Added this variable for image link
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _imageController =
+      TextEditingController(); // Jika diperlukan untuk image URL
+  String _message = '';
+  bool _isLoading = false;
+
+  final ApiService _apiService = ApiService();
+
+  void _register() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Buat objek RegisterRequestModel berdasarkan input dari pengguna
+      RegisterRequestModel request = RegisterRequestModel(
+        username: _usernameController.text,
+        password: _passwordController.text,
+        image: _imageController.text, // Sesuaikan dengan field yang diperlukan
+      );
+
+      // Kirim permintaan registrasi menggunakan ApiService
+      RegisterResponseModel response = await _apiService.register(request);
+
+      setState(() {
+        _message = response.message; // Tampilkan pesan respons dari server
+      });
+
+      // Jika registrasi berhasil, kembalikan ke halaman login
+      if (response.message == 'Sukses membuat akun') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
+    } catch (e) {
+      // Tangkap dan tampilkan pesan error dari backend
+      setState(() {
+        _message =
+            'Failed to register: ${e.toString()}'; // Menampilkan pesan error
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: HexColor('#e3f6f5'),
-        body: ProgressHUD(
-          child: Form(
-            key: globalFormKey,
-            child: _loginUI(context),
-          ),
-          inAsyncCall: isAPICallProcess,
-          opacity: 0.3,
-          key: UniqueKey(),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Register Page'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(labelText: 'Username'),
+                  ),
+                  TextField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                  ),
+                  TextField(
+                    controller: _imageController,
+                    decoration: InputDecoration(
+                        labelText:
+                            'Image URL'), // Sesuaikan dengan label yang sesuai
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _register,
+                    child: Text('Register'),
+                  ),
+                  SizedBox(height: 20),
+                  Text(_message, style: TextStyle(color: Colors.red)),
+                ],
+              ),
       ),
     );
-  }
-
-  Widget _loginUI(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 4,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    "assets/images/loginpage.png",
-                    width: 120,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "STORAGE MANAGEMENT",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                    prefixIcon: Icon(Icons.person),
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your username';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    username = value;
-                  },
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        hidePassword ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          hidePassword = !hidePassword;
-                        });
-                      },
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: hidePassword,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    password = value;
-                  },
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Image Link',
-                    prefixIcon: Icon(Icons.link),
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your image link';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    imageLink = value;
-                  },
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    _submit();
-                  },
-                  child: Text('REGISTER'), // Changed button text to 'REGISTER'
-                ),
-                SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, "/");
-                  },
-                  child: Text(
-                    'Sudah punya akun? Login disini',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _submit() {
-    if (globalFormKey.currentState!.validate()) {
-      globalFormKey.currentState!.save();
-      // Handle registration logic here, e.g., validate with backend
-      print('Username: $username');
-      print('Password: $password');
-      print('Image Link: $imageLink'); // Print image link for testing
-    }
   }
 }
