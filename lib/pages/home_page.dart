@@ -78,13 +78,13 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(width: 10),
             Text(_username),
-            GestureDetector(
-              onTap: () => _navigateToProfile(context),
-              child: Icon(Icons.edit),
-            ),
           ],
         ),
         actions: [
+          IconButton(
+            icon: Icon(Icons.settings), // Changed to settings icon
+            onPressed: () => _navigateToProfile(context),
+          ),
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () => _logout(context),

@@ -47,7 +47,7 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Product updated successfully')),
         );
-        Navigator.pop(context);
+        Navigator.pop(context); // Return to previous page (ProductPage)
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to update product: $e')),
