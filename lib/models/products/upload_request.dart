@@ -1,4 +1,10 @@
 class UploadRequest {
+  late final int categoryId;
+  late final String name;
+  late final String urlImage;
+  late final int qty;
+  late final String createdBy;
+
   UploadRequest({
     required this.categoryId,
     required this.name,
@@ -6,12 +12,6 @@ class UploadRequest {
     required this.qty,
     required this.createdBy,
   });
-
-  late final int categoryId;
-  late final String name;
-  late final String urlImage;
-  late final int qty;
-  late final String createdBy;
 
   UploadRequest.fromJson(Map<String, dynamic> json) {
     categoryId = json['category_id'];

@@ -1,0 +1,67 @@
+class ProductsResponse {
+  late final List<Result> result;
+
+  ProductsResponse({
+    required this.result,
+  });
+
+  ProductsResponse.fromJson(Map<String, dynamic> json) {
+    result = List.from(json['result']).map((e) => Result.fromJson(e)).toList();
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['result'] = result.map((e) => e.toJson()).toList();
+    return _data;
+  }
+}
+
+class Result {
+  late final int id;
+  late final int categoryId;
+  late final String name;
+  late final String urlImage;
+  late final int qty;
+  late final String createdBy;
+  late final Null updateBy;
+  late final String createdate;
+  late final String updatedate;
+
+  Result({
+    required this.id,
+    required this.categoryId,
+    required this.name,
+    required this.urlImage,
+    required this.qty,
+    required this.createdBy,
+    this.updateBy,
+    required this.createdate,
+    required this.updatedate,
+  });
+
+  Result.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    categoryId = json['category_id'];
+    name = json['name'];
+    urlImage = json['url_image'];
+    qty = json['qty'];
+    createdBy = json['created_by'];
+    updateBy = null; // Assuming updateBy is always null in this context
+    createdate = json['createdate'];
+    updatedate = json['updatedate'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['category_id'] = categoryId;
+    _data['name'] = name;
+    _data['url_image'] = urlImage;
+    _data['qty'] = qty;
+    _data['created_by'] = createdBy;
+    _data['update_by'] = updateBy;
+    _data['createdate'] = createdate;
+    _data['updatedate'] = updatedate;
+    return _data;
+  }
+}
