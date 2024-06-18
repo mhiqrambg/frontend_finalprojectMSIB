@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import '../../models/products/products_response.dart';
 import '../../services/api_service.dart';
+import 'update_product.dart';
 
 class ProductPage extends StatefulWidget {
   @override
@@ -43,7 +43,17 @@ class _ProductPageState extends State<ProductPage> {
             leading: Image.network(product.urlImage),
             title: Text(product.name),
             subtitle: Text('Stock: ${product.qty}'),
-            // Add other details as needed, e.g., price, etc.
+            trailing: IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UpdateProductPage(product: product),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),
