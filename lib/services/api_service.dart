@@ -75,7 +75,7 @@ class ApiService {
     if (response.statusCode == 201) {
       return UploadResponse.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to Upload');
+      throw Exception(response.body);
     }
   }
 

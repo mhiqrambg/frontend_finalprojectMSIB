@@ -51,6 +51,12 @@ class _ProductPageState extends State<ProductPage> {
                 child: Image.network(
                   product.urlImage,
                   fit: BoxFit.cover, // Or your preferred BoxFit
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      'assets/default_product.png',
+                      fit: BoxFit.cover,
+                    );
+                  },
                 ),
               ),
               title: Text(product.name),

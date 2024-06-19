@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'home_page/category_page.dart';
 import 'home_page/products.dart';
 import 'home_page/upload_page.dart';
 import 'login_page.dart';
@@ -15,15 +14,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final FlutterSecureStorage _storage = FlutterSecureStorage();
-
-  String _username = '';
-  String _image = '';
-
-  static List<Widget> _pages = <Widget>[
-    CategoryPage(),
-    UploadPage(),
-    ProductPage(),
-  ];
+  late String _username;
+  late String _image;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -32,11 +25,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadUserInfo() async {
-    String? username = await _storage.read(key: 'username');
-    String? image = await _storage.read(key: 'image');
+    _username = await _storage.read(key: 'username') ?? 'Guest';
+    _image = await _storage.read(key: 'image') ?? '';
     setState(() {
-      _username = username ?? 'Guest';
-      _image = image ?? '';
+      _isLoading = false;
     });
   }
 
@@ -55,10 +47,9 @@ class _HomePageState extends State<HomePage> {
     _loadUserInfo(); // Reload user info when returning from profile page
   }
 
+  // Function to handle logout
   Future<void> _logout(BuildContext context) async {
-    await _storage.delete(key: 'token');
-    await _storage.delete(key: 'username');
-    await _storage.delete(key: 'image');
+    await _storage.deleteAll();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
@@ -67,50 +58,58 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: _image.isNotEmpty
-                  ? NetworkImage(_image)
-                  : AssetImage('assets/default_avatar.png') as ImageProvider,
+    return _isLoading
+        ? Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
             ),
-            SizedBox(width: 10),
-            Text(_username),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings), // Changed to settings icon
-            onPressed: () => _navigateToProfile(context),
-          ),
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () => _logout(context),
-          ),
-        ],
-      ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: 'Category',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.upload),
-            label: 'Upload',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Product',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-    );
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: _image.isNotEmpty
+                        ? NetworkImage(_image)
+                        : AssetImage('assets/default_avatar.jpg'),
+                  ),
+                  SizedBox(width: 10),
+                  Text(_username),
+                ],
+              ),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () => _navigateToProfile(context),
+                ),
+                IconButton(
+                  icon: Icon(Icons.logout),
+                  onPressed: () => _logout(context),
+                ),
+              ],
+            ),
+            body: IndexedStack(
+              index: _selectedIndex,
+              children: [
+                ProductPage(),
+                UploadPage(),
+              ],
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.shopping_bag),
+                  label: 'Product',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.upload),
+                  label: 'Upload',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.amber[800],
+              onTap: _onItemTapped,
+            ),
+          );
   }
 }

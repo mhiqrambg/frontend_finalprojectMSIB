@@ -27,7 +27,7 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
     _name = widget.product.name;
     _urlImage = widget.product.urlImage;
     _qty = widget.product.qty;
-    _updateBy = 'current_user'; // Replace with actual user ID or name
+    _updateBy = 'belum di set';
   }
 
   Future<void> _updateProduct() async {

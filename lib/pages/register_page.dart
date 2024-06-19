@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/register_request.dart';
 import '../models/register_response.dart';
 import '../services/api_service.dart';
-import 'login_page.dart'; // Import halaman login_page.dart
+import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -12,8 +12,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _imageController =
-      TextEditingController(); // Jika diperlukan untuk image URL
+  final TextEditingController _imageController = TextEditingController();
   String _message = '';
   bool _isLoading = false;
 
@@ -25,32 +24,47 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      // Buat objek RegisterRequestModel berdasarkan input dari pengguna
       RegisterRequestModel request = RegisterRequestModel(
         username: _usernameController.text,
         password: _passwordController.text,
-        image: _imageController.text, // Sesuaikan dengan field yang diperlukan
+        image: _imageController.text,
       );
 
-      // Kirim permintaan registrasi menggunakan ApiService
       RegisterResponseModel response = await _apiService.register(request);
 
-      setState(() {
-        _message = response.message; // Tampilkan pesan respons dari server
-      });
-
-      // Jika registrasi berhasil, kembalikan ke halaman login
       if (response.message == 'Sukses membuat akun') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
+        setState(() {
+          _message = ''; // Clear message on success
+        });
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Registration Successful'),
+              content: Text('Your account has been created successfully.'),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
         );
+      } else {
+        setState(() {
+          _message = response.message; // Show error message from server
+        });
       }
     } catch (e) {
-      // Tangkap dan tampilkan pesan error dari backend
       setState(() {
-        _message =
-            'Failed to register: ${e.toString()}'; // Menampilkan pesan error
+        _message = 'Failed to register: ${e.toString()}';
       });
     } finally {
       setState(() {
@@ -83,9 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   TextField(
                     controller: _imageController,
-                    decoration: InputDecoration(
-                        labelText:
-                            'Image URL'), // Sesuaikan dengan label yang sesuai
+                    decoration: InputDecoration(labelText: 'Image URL'),
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
@@ -93,7 +105,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Text('Register'),
                   ),
                   SizedBox(height: 20),
-                  Text(_message, style: TextStyle(color: Colors.red)),
+                  if (_message.isNotEmpty)
+                    Text(
+                      _message,
+                      style: TextStyle(color: Colors.red),
+                    ),
                 ],
               ),
       ),
