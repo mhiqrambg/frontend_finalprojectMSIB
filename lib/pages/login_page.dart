@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import '../models/login_request.dart';
 import '../models/login_response.dart';
 import '../services/api_service.dart';
@@ -23,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   void _login() async {
     setState(() {
       _isLoading = true;
-      _message = ''; // Clear previous error message
+      _message = '';
     });
 
     try {
@@ -33,21 +32,19 @@ class _LoginPageState extends State<LoginPage> {
       );
       LoginResponseModel response = await _apiService.login(request);
 
-      // Save token, username, and image securely on the user's device
       await _storage.write(key: 'token', value: response.token);
       await _storage.write(key: 'username', value: response.user.username);
       await _storage.write(key: 'image', value: response.user.image);
 
-      // Navigate to home page after successful login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );
     } catch (e) {
       setState(() {
-        _message = 'Login failed: $e'; // Display error message
+        _message = 'Login failed: $e';
       });
-      // Handle login error if needed
+      //
     } finally {
       setState(() {
         _isLoading = false;
@@ -75,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/image/logo.png', // Adjust this path to your logo
+              'assets/image/logo.png',
               height: 100,
               width: 100,
             ),
@@ -94,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: _isLoading ? null : _login,
               child: _isLoading
                   ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
                     )
                   : Text('Login'),
             ),

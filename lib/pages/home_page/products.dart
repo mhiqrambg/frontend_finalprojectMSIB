@@ -20,7 +20,7 @@ class _ProductPageState extends State<ProductPage> {
   Future<void> fetchProducts() async {
     try {
       final productsResponse = await ApiService.getProducts();
-      // Sort products by categoryId
+
       products = List.from(productsResponse.result)
         ..sort((a, b) => a.categoryId.compareTo(b.categoryId));
       setState(() {
@@ -28,7 +28,6 @@ class _ProductPageState extends State<ProductPage> {
       });
     } catch (e) {
       print('Error fetching products: $e');
-      // Handle error appropriately, e.g., show a snackbar or alert dialog
     }
   }
 
@@ -46,11 +45,11 @@ class _ProductPageState extends State<ProductPage> {
             var product = products[index];
             return ListTile(
               leading: Container(
-                width: 60, // Adjust as needed
-                height: 80, // Adjust as needed
+                width: 60,
+                height: 80,
                 child: Image.network(
                   product.urlImage,
-                  fit: BoxFit.cover, // Or your preferred BoxFit
+                  fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Image.asset(
                       'assets/default_product.png',
@@ -70,7 +69,7 @@ class _ProductPageState extends State<ProductPage> {
                       builder: (context) => UpdateProductPage(product: product),
                     ),
                   );
-                  // Reload products after returning from update page
+
                   fetchProducts();
                 },
               ),

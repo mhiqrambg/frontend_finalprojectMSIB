@@ -64,6 +64,17 @@ class ApiService {
     }
   }
 
+  static Future<ProductsResponse> getProducts() async {
+    final url = Uri.parse('${Config.apiUrl + Config.userAPI}/products');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return ProductsResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load products');
+    }
+  }
+
   Future<UploadResponse> uploadData(UploadRequest request) async {
     final url = Uri.parse('${Config.apiUrl + Config.userAPI}/products');
     final response = await http.post(
@@ -76,17 +87,6 @@ class ApiService {
       return UploadResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception(response.body);
-    }
-  }
-
-  static Future<ProductsResponse> getProducts() async {
-    final url = Uri.parse('${Config.apiUrl + Config.userAPI}/products');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      return ProductsResponse.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load products');
     }
   }
 
