@@ -26,7 +26,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return LoginResponseModel.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to login');
+      throw ('Username atau Password Salah');
     }
   }
 
@@ -41,7 +41,18 @@ class ApiService {
     if (response.statusCode == 201) {
       return RegisterResponseModel.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to register');
+      // Handling error response
+      String errorMessage = 'Failed to register';
+      // ignore: unnecessary_null_comparison
+      if (response.body != null && response.body.isNotEmpty) {
+        try {
+          var errorJson = jsonDecode(response.body);
+          errorMessage = errorJson['message'] ?? errorMessage;
+        } catch (e) {
+          print('Error decoding error response: $e');
+        }
+      }
+      throw (errorMessage);
     }
   }
 
@@ -87,7 +98,18 @@ class ApiService {
     if (response.statusCode == 201) {
       return UploadResponse.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception(response.body);
+      // Handling error response
+      String errorMessage = 'Failed to register';
+      // ignore: unnecessary_null_comparison
+      if (response.body != null && response.body.isNotEmpty) {
+        try {
+          var errorJson = jsonDecode(response.body);
+          errorMessage = errorJson['message'] ?? errorMessage;
+        } catch (e) {
+          print('Error decoding error response: $e');
+        }
+      }
+      throw (errorMessage);
     }
   }
 

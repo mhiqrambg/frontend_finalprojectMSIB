@@ -64,7 +64,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     } catch (e) {
       setState(() {
-        _message = 'Failed to register: ${e.toString()}';
+        _message = '$e';
       });
     } finally {
       setState(() {

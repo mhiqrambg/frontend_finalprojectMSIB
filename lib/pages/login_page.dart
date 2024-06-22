@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     } catch (e) {
       setState(() {
-        _message = 'Login failed: $e';
+        _message = '$e';
       });
       //
     } finally {

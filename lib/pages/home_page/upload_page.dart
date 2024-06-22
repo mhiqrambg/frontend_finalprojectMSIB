@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../models/products/upload_request.dart';
 import '../../models/products/upload_response.dart';
 import '../../services/api_service.dart';
@@ -13,12 +14,28 @@ class _UploadPageState extends State<UploadPage> {
   final TextEditingController _urlImageController = TextEditingController();
   final TextEditingController _qtyController = TextEditingController();
   final TextEditingController _createdByController = TextEditingController();
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
+  late String _username;
 
   int _categoryId = 1;
   List<String> _categories = ['Elektronik', 'Pakaian', 'Kendaraan'];
 
   ApiService _apiService = ApiService();
   String _errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Panggil _loadUserInfo() untuk mendapatkan _username dari FlutterSecureStorage
+    _loadUserInfo().then((_) {
+      // Setelah _username tersedia, atur nilai awal _createdByController
+      _createdByController.text = _username;
+    });
+  }
+
+  Future<void> _loadUserInfo() async {
+    _username = await _storage.read(key: 'username') ?? 'Guest';
+  }
 
   void _submitForm() async {
     String name = _nameController.text.trim();
@@ -55,7 +72,7 @@ class _UploadPageState extends State<UploadPage> {
                   _nameController.clear();
                   _urlImageController.clear();
                   _qtyController.clear();
-                  _createdByController.clear();
+
                   setState(() {
                     _errorMessage = '';
                   });
@@ -67,7 +84,7 @@ class _UploadPageState extends State<UploadPage> {
       );
     } catch (e) {
       setState(() {
-        _errorMessage = 'Upload failed: ${e.toString()}';
+        _errorMessage = '${e.toString()}';
       });
     }
   }
@@ -106,6 +123,8 @@ class _UploadPageState extends State<UploadPage> {
             TextField(
               controller: _createdByController,
               decoration: InputDecoration(labelText: 'Created By'),
+              readOnly: true,
+              // enabled: true,
             ),
             SizedBox(height: 20),
             DropdownButtonFormField<int>(

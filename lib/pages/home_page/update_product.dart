@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/products/update_request.dart';
 import '../../services/api_service.dart';
 import '../../models/products/products_response.dart';
+import '../home_page.dart';
 
 class UpdateProductPage extends StatefulWidget {
   final Result product;
@@ -47,7 +48,10 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Product updated successfully')),
         );
-        Navigator.pop(context); // Return to previous page (ProductPage)
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to update product: $e')),
