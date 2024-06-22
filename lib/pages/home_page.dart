@@ -38,13 +38,30 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Function to navigate to profile page and reload user info upon return
   Future<void> _navigateToProfile(BuildContext context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ProfilePage()),
-    );
-    _loadUserInfo(); // Reload user info when returning from profile page
+    if (_username != 'mhiqrambg') {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Username mismatch!'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage()),
+      );
+      _loadUserInfo();
+    }
   }
 
   // Function to handle logout

@@ -56,11 +56,31 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
     }
   }
 
+  Future<void> _deleteProduct() async {
+    try {
+      await ApiService.deleteProduct(widget.product.id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Product deleted successfully')),
+      );
+      Navigator.pop(context); // Return to previous page (ProductPage)
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete product: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Update Product'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: _deleteProduct,
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -112,9 +132,23 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
                 },
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _updateProduct,
-                child: Text('Update Product'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _updateProduct,
+                    child: Text('Update Product'),
+                  ),
+                  SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: _deleteProduct,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.red, // Text color
+                    ),
+                    child: Text('Delete Product'),
+                  ),
+                ],
               ),
             ],
           ),

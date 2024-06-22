@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config.dart';
+import '../models/products/delete_response.dart';
 import '../models/products/products_response.dart';
 import '../models/products/update_request.dart';
 import '../models/products/update_response.dart';
@@ -104,6 +105,21 @@ class ApiService {
       return UpdateProductsResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception(response.body);
+    }
+  }
+
+  static Future<DeleteProductResponse> deleteProduct(int productId) async {
+    final url =
+        Uri.parse('${Config.apiUrl + Config.userAPI}/products/$productId');
+    final response = await http.delete(
+      url,
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return DeleteProductResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to delete product: ${response.body}');
     }
   }
 }

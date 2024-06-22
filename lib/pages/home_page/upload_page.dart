@@ -51,7 +51,7 @@ class _UploadPageState extends State<UploadPage> {
                 onPressed: () {
                   // Close dialog
                   Navigator.of(context).pop();
-                  // Reset controllers and error message after dialog is closed
+
                   _nameController.clear();
                   _urlImageController.clear();
                   _qtyController.clear();
@@ -66,7 +66,6 @@ class _UploadPageState extends State<UploadPage> {
         },
       );
     } catch (e) {
-      // Handle API error
       setState(() {
         _errorMessage = 'Upload failed: ${e.toString()}';
       });
