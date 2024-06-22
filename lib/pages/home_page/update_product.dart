@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../models/products/update_request.dart';
 import '../../services/api_service.dart';
 import '../../models/products/products_response.dart';
@@ -15,6 +16,8 @@ class UpdateProductPage extends StatefulWidget {
 
 class _UpdateProductPageState extends State<UpdateProductPage> {
   final _formKey = GlobalKey<FormState>();
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
+  late String _username;
   late int _categoryId;
   late String _name;
   late String _urlImage;
@@ -24,11 +27,17 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
   @override
   void initState() {
     super.initState();
+    _loadUserInfo().then((_) {
+      _updateBy = _username;
+    });
     _categoryId = widget.product.categoryId;
     _name = widget.product.name;
     _urlImage = widget.product.urlImage;
     _qty = widget.product.qty;
-    _updateBy = 'belum di set';
+  }
+
+  Future<void> _loadUserInfo() async {
+    _username = await _storage.read(key: 'username') ?? 'Guest';
   }
 
   Future<void> _updateProduct() async {
@@ -48,7 +57,7 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Product updated successfully')),
         );
-        Navigator.pushReplacement(
+        Navigator.pop(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );

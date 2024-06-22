@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                   CircleAvatar(
                     backgroundImage: _image.isNotEmpty
                         ? NetworkImage(_image)
-                        : AssetImage('assets/default_avatar.jpg'),
+                        : AssetImage('assets/default_avatar1.jpg'),
                   ),
                   SizedBox(width: 10),
                   Text(_username),
