@@ -72,9 +72,9 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/image/logo.png',
+              'assets/image/login.png',
               height: 100,
-              width: 100,
+              width: 200,
             ),
             SizedBox(height: 20),
             TextField(

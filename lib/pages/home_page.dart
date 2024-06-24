@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _navigateToProfile(BuildContext context) async {
-    if (_username != 'mhiqrambg') {
+    if (_username != _username) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/register_request.dart';
 import '../models/register_response.dart';
 import '../services/api_service.dart';
-import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -47,10 +46,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextButton(
                   child: Text('OK'),
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
+                    // Close dialog
+                    Navigator.of(context).pop();
                   },
                 ),
               ],
@@ -86,6 +83,11 @@ class _RegisterPageState extends State<RegisterPage> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Image.asset(
+                    'assets/image/signup.jpg',
+                    height: 120,
+                    width: 180,
+                  ),
                   TextField(
                     controller: _usernameController,
                     decoration: InputDecoration(labelText: 'Username'),

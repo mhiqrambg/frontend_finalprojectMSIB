@@ -39,14 +39,16 @@ class _ProductPageState extends State<ProductPage> {
       ),
       body: RefreshIndicator(
         onRefresh: fetchProducts,
-        child: ListView.builder(
+        child: ListView.separated(
           itemCount: products.length,
+          separatorBuilder: (context, index) =>
+              Divider(), // Adding a divider between items
           itemBuilder: (context, index) {
             var product = products[index];
             return ListTile(
               leading: Container(
                 width: 60,
-                height: 80,
+                height: 90,
                 child: Image.network(
                   product.urlImage,
                   fit: BoxFit.cover,
@@ -59,7 +61,9 @@ class _ProductPageState extends State<ProductPage> {
                 ),
               ),
               title: Text(product.name),
-              subtitle: Text('Stock: ${product.qty}'),
+              subtitle: Text(
+                'Stock: ${product.qty}\nCreated by: ${product.createdBy}\nUpdated by: ${product.updateBy}',
+              ),
               trailing: IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () async {
@@ -69,7 +73,6 @@ class _ProductPageState extends State<ProductPage> {
                       builder: (context) => UpdateProductPage(product: product),
                     ),
                   );
-
                   fetchProducts();
                 },
               ),

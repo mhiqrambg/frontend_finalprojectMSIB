@@ -14,6 +14,7 @@ class _UploadPageState extends State<UploadPage> {
   final TextEditingController _urlImageController = TextEditingController();
   final TextEditingController _qtyController = TextEditingController();
   final TextEditingController _createdByController = TextEditingController();
+  // final TextEditingController _updateByController = TextEditingController();
   final FlutterSecureStorage _storage = FlutterSecureStorage();
   late String _username;
 
@@ -42,6 +43,7 @@ class _UploadPageState extends State<UploadPage> {
     String urlImage = _urlImageController.text.trim();
     int qty = int.tryParse(_qtyController.text.trim()) ?? 0;
     String createdBy = _createdByController.text.trim();
+    // String updateBy = _updateByController.text.trim();
 
     var request = UploadRequest(
       categoryId: _categoryId,
@@ -49,6 +51,7 @@ class _UploadPageState extends State<UploadPage> {
       urlImage: urlImage,
       qty: qty,
       createdBy: createdBy,
+      updateBy: _username,
     );
 
     try {
